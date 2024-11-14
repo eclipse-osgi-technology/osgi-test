@@ -73,7 +73,7 @@ jobs:
     - name: Gradle Wrapper Validation
       uses: gradle/wrapper-validation-action@85cde3f5a1033b2adc2442631c24b530f1183a1a
     - name: Set up Java ${{ matrix.java }}
-      uses: actions/setup-java@5896cecc08fd8a1fbdfaf517e29b571164b031f7
+      uses: actions/setup-java@8df1039502a15bceb9433410b1a100fbe190c53b
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}

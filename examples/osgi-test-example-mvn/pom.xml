@@ -37,7 +37,7 @@
 		<java.release>8</java.release>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<bnd.version>6.4.0</bnd.version>
+		<bnd.version>7.0.0</bnd.version>
 		<junit-jupiter.version>5.10.2</junit-jupiter.version>
 		<assertj.version>3.24.2</assertj.version>
 		<mockito.version>4.11.0</mockito.version>

@@ -39,7 +39,7 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<bnd.version>6.4.0</bnd.version>
 		<junit-jupiter.version>5.10.2</junit-jupiter.version>
-		<assertj.version>3.24.2</assertj.version>
+		<assertj.version>3.27.0</assertj.version>
 		<mockito.version>4.11.0</mockito.version>
 		<osgi-test.version>1.2.1</osgi-test.version>
 	</properties>

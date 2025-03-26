@@ -44,7 +44,7 @@
 		<assertj.compile.version>3.23.1</assertj.compile.version>
 		<assertj.version>3.24.2</assertj.version>
 		<mockito.version>4.11.0</mockito.version>
-		<awaitility.version>4.2.0</awaitility.version>
+		<awaitility.version>4.3.0</awaitility.version>
 		<osgi.annotation.version>8.1.0</osgi.annotation.version>
 		<osgi.dto.version>1.0.0</osgi.dto.version>
 		<osgi.resource.version>1.0.0</osgi.resource.version>

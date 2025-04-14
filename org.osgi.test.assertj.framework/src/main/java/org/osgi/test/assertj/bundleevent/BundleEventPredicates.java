@@ -16,6 +16,40 @@
  * SPDX-License-Identifier: Apache-2.0
  *******************************************************************************/
 
-@org.osgi.annotation.bundle.Export
-@org.osgi.annotation.versioning.Version("1.1.0")
 package org.osgi.test.assertj.bundleevent;
+
+import java.util.function.Predicate;
+
+import org.osgi.framework.BundleEvent;
+
+/**
+ * The Interface BundleEventPredicates.
+ *
+ * @since 1.1
+ */
+public final class BundleEventPredicates {
+
+	private BundleEventPredicates() {}
+
+	// BundleEvents
+
+	/**
+	 * Returns a predicate that tests if the object Bundle event.
+	 *
+	 * @return the predicate
+	 */
+	public static <T> Predicate<T> bundleEvent() {
+		return e -> e instanceof BundleEvent;
+	}
+
+	/**
+	 * Returns a predicate that tests if the event-type matches the given
+	 * eventTypeMask.
+	 *
+	 * @param eventTypeMask the event type mask
+	 * @return the predicate
+	 */
+	public static Predicate<BundleEvent> type(final int eventTypeMask) {
+		return e -> (e.getType() & eventTypeMask) != 0;
+	}
+}

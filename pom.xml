@@ -46,7 +46,7 @@
 		<mockito.version>4.11.0</mockito.version>
 		<awaitility.version>4.3.0</awaitility.version>
 		<osgi.annotation.version>8.1.0</osgi.annotation.version>
-		<osgi.dto.version>1.0.0</osgi.dto.version>
+		<osgi.dto.version>1.1.0</osgi.dto.version>
 		<osgi.resource.version>1.0.0</osgi.resource.version>
 		<osgi.framework.version>1.8.0</osgi.framework.version>
 		<osgi.tracker.version>1.5.4</osgi.tracker.version>

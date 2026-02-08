@@ -29,8 +29,8 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>org.osgi.test.example.api</artifactId>
-	<description>OSGi Testing Example API</description>
+	<artifactId>org.osgi.test.example.player.api</artifactId>
+	<description>OSGi Testing Example Player API</description>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<url>https://www.osgi.org</url>
 	<scm>

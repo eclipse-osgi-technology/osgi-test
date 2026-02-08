@@ -20,8 +20,8 @@ package org.osgi.test.example.player.impl;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.test.example.api.Ball;
-import org.osgi.test.example.api.Player;
+import org.osgi.test.example.player.api.Ball;
+import org.osgi.test.example.player.api.Player;
 
 @Component
 public class PlayerImpl implements Player {

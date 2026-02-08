@@ -46,7 +46,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.osgi.test.example</groupId>
-			<artifactId>org.osgi.test.example.api</artifactId>
+			<artifactId>org.osgi.test.example.player.api</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>

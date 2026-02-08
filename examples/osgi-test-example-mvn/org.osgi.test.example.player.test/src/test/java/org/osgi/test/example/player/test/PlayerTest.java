@@ -38,8 +38,8 @@ import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.dictionary.Dictionaries;
 import org.osgi.test.common.service.ServiceAware;
-import org.osgi.test.example.api.Ball;
-import org.osgi.test.example.api.Player;
+import org.osgi.test.example.player.api.Ball;
+import org.osgi.test.example.player.api.Player;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 

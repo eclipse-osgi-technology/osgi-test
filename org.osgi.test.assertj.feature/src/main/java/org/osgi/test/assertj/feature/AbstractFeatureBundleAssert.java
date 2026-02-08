@@ -20,6 +20,7 @@ package org.osgi.test.assertj.feature;
 
 import java.util.Map;
 
+import org.assertj.core.api.AbstractObjectAssert;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.assertj.core.api.InstanceOfAssertFactory;
 import org.assertj.core.api.MapAssert;
@@ -30,7 +31,7 @@ import org.osgi.service.feature.FeatureBundle;
  * by CustomAssertionGenerator.
  */
 public abstract class AbstractFeatureBundleAssert<S extends AbstractFeatureBundleAssert<S, A>, A extends FeatureBundle>
-	extends AbstractFeatureArtifactAssert<S, A> {
+	extends AbstractObjectAssert<S, A> {
 
 	/**
 	 * Creates a new <code>{@link AbstractFeatureBundleAssert}</code> to make
@@ -40,6 +41,12 @@ public abstract class AbstractFeatureBundleAssert<S extends AbstractFeatureBundl
 	 */
 	protected AbstractFeatureBundleAssert(A actual, Class<S> selfType) {
 		super(actual, selfType);
+	}
+
+	public IDAssert hasIDThat() {
+		isNotNull();
+		return IDAssert.assertThat(actual.getID())
+			.as(actual + ".id");
 	}
 
 	@SuppressWarnings("rawtypes")

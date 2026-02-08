@@ -69,6 +69,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.osgi</groupId>
+				<artifactId>org.osgi.test.assertj.feature</artifactId>
+				<version>${project.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi</groupId>
 				<artifactId>org.osgi.test.junit4</artifactId>
 				<version>${project.version}</version>
 				<scope>test</scope>

@@ -60,6 +60,7 @@
 
 	<modules>
 		<module>org.osgi.test.common</module>
+		<module>org.osgi.test.assertj.feature</module>
 		<module>org.osgi.test.assertj.framework</module>
 		<module>org.osgi.test.assertj.log</module>
 		<module>org.osgi.test.assertj.promise</module>
@@ -132,7 +133,17 @@
 			<archive>http://www.eclipse.org/lists/osgi-users</archive>
 		</mailingList>
 	</mailingLists>
-
+	<!-- Remove before merge -->
+			<repositories>
+				<repository>
+					<id>snapshots</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+					<layout>default</layout>
+					<releases>
+						<enabled>false</enabled>
+					</releases>
+				</repository>
+			</repositories>
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -572,6 +583,12 @@ SPDX-License-Identifier: ${project.licenses[0].name}
 				<artifactId>org.osgi.namespace.service</artifactId>
 				<version>1.0.0</version>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi</groupId>
+				<artifactId>org.osgi.service.feature</artifactId>
+				<version>1.0.0</version>
+				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.osgi</groupId>

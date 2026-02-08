@@ -64,7 +64,8 @@ public class ConfigAnnotationTest {
 
 		Configuration c = ca.createFactoryConfiguration(FACTORY_CONFIGURATION_PID);
 		c.update(Dictionaries.dictionaryOf("foo", "bar"));
-
+		// test
+		c.delete();
 	}
 
 	// START TESTS

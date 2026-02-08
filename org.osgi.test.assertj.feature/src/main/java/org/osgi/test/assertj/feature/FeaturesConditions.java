@@ -60,7 +60,7 @@ interface FeaturesConditions {
 		}
 
 		static Condition<Feature> descriptionEmpty() {
-			return new Condition<>(f -> !f.getDescription()
+			return new Condition<>(f -> f.getDescription() == null || !f.getDescription()
 				.isPresent(), "description <isEmpty>");
 		}
 
@@ -101,7 +101,7 @@ interface FeaturesConditions {
 		}
 
 		static Condition<Feature> licenseEmpty() {
-			return new Condition<>(f -> !f.getLicense()
+			return new Condition<>(f -> f.getLicense() == null || !f.getLicense()
 				.isPresent(), "license <isEmpty>");
 		}
 
@@ -124,7 +124,7 @@ interface FeaturesConditions {
 		}
 
 		static Condition<Feature> nameEmpty() {
-			return new Condition<>(f -> !f.getName()
+			return new Condition<>(f -> f.getName() == null || !f.getName()
 				.isPresent(), "name <isEmpty>");
 		}
 
@@ -151,7 +151,7 @@ interface FeaturesConditions {
 		}
 
 		static Condition<Feature> vendorEmpty() {
-			return new Condition<>(f -> !f.getVendor()
+			return new Condition<>(f -> f.getVendor() == null || !f.getVendor()
 				.isPresent(), "vendor <isEmpty>");
 		}
 
@@ -291,7 +291,7 @@ interface FeaturesConditions {
 		}
 
 		static Condition<FeatureExtension> type(final FeatureExtension.Type type) {
-			return kind(null);
+			return new Condition<>(f -> Objects.equals(f.getType(), type), "type <%s>", type);
 		}
 
 		static Condition<FeatureExtension> typeArtifacts() {

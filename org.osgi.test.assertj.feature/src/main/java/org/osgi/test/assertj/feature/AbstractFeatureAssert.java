@@ -21,6 +21,7 @@ package org.osgi.test.assertj.feature;
 import java.util.List;
 import java.util.Map;
 
+import org.assertj.core.api.AbstractObjectAssert;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.assertj.core.api.InstanceOfAssertFactory;
 import org.assertj.core.api.ListAssert;
@@ -35,7 +36,7 @@ import org.osgi.service.feature.FeatureExtension;
  * CustomAssertionGenerator.
  */
 public abstract class AbstractFeatureAssert<S extends AbstractFeatureAssert<S, A>, A extends Feature>
-	extends AbstractFeatureArtifactAssert<S, A> {
+	extends AbstractObjectAssert<S, A> {
 
 	/**
 	 * Creates a new <code>{@link AbstractFeatureAssert}</code> to make
@@ -45,6 +46,12 @@ public abstract class AbstractFeatureAssert<S extends AbstractFeatureAssert<S, A
 	 */
 	protected AbstractFeatureAssert(A actual, Class<S> selfType) {
 		super(actual, selfType);
+	}
+
+	public IDAssert hasIDThat() {
+		isNotNull();
+		return IDAssert.assertThat(actual.getID())
+			.as(actual + ".id");
 	}
 
 	@SuppressWarnings("rawtypes")

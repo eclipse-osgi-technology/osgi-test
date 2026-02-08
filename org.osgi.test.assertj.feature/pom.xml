@@ -66,4 +66,24 @@
 			<artifactId>junit-jupiter-params</artifactId>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>biz.aQute.bnd</groupId>
+				<artifactId>bnd-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>test-jar</id>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+						<configuration>
+							<artifactFragment>true</artifactFragment>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

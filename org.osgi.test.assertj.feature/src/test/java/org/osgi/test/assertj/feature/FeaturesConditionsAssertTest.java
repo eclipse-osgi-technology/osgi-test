@@ -66,7 +66,7 @@ public class FeaturesConditionsAssertTest implements ConditionAssert {
 			// assertion fail
 			assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> Assertions.assertThat(feature)
 				.isComplete())
-				.withMessage(format("%nExpecting:%n  " + featureName + "%nto be complete"));
+				.withMessage(format("%nExpecting actual:%n  " + featureName + "%nto be complete"));
 		}
 
 		@Test
@@ -89,7 +89,7 @@ public class FeaturesConditionsAssertTest implements ConditionAssert {
 			// assertion fail
 			assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> Assertions.assertThat(feature)
 				.isNotComplete())
-				.withMessage(format("%nExpecting:%n  " + featureName + "%nnot to be  complete"));
+				.withMessage(format("%nExpecting actual:%n  " + featureName + "%nnot to be complete"));
 
 		}
 
@@ -108,12 +108,12 @@ public class FeaturesConditionsAssertTest implements ConditionAssert {
 			when(feature.getName()).thenReturn(Optional.of("featureName"));
 
 			// condition fail
-			failingHas(FeaturesConditions.FeatureConditions.nameEmpty(), feature, "name <null>");
+			failingHas(FeaturesConditions.FeatureConditions.nameEmpty(), feature, "name <isEmpty>");
 
 			// assertion fail
 			assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> Assertions.assertThat(feature)
 				.hasNameEmpty())
-				.withMessage(format("%nExpecting:%n  " + featureName + "%nto have:%n  name <null>"));
+				.withMessage(format("%nExpecting actual:%n  " + featureName + "%nto have name <isEmpty>"));
 		}
 	}
 	// TODO: All additional tests after specification is more stable.

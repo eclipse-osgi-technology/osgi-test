@@ -16,12 +16,12 @@
  * SPDX-License-Identifier: Apache-2.0
  *******************************************************************************/
 
-package org.osgi.test.example.api;
+package org.osgi.test.example.player.api;
 
 public interface Ball {
 
 	void inflate();
 
 	void kick();
-	
+
 }

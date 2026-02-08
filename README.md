@@ -30,6 +30,12 @@ This artifact provides support classes for OSGi testing with ConfigurationAdmin 
 
 This artifact provides a [JUnit 5](https://junit.org/junit5/) `TestExecutionListener` that logs test output via the OSGi Log Service.
 
+## Examples
+
+### [Maven Examples][9]
+
+A set of example projects demonstrating how to set up OSGi testing with Maven, including a [comprehensive demo][10] showcasing all osgi-test features.
+
 ## Building
 
 We use Maven to build and the repo includes `mvnw`.
@@ -79,4 +85,6 @@ This project uses the [Bnd Maven Plugins](https://github.com/bndtools/bnd) to bu
 [6]: org.osgi.test.junit5.cm/README.md
 [7]: org.osgi.test.assertj.log/README.md
 [8]: org.osgi.test.junit5.listeners.log.osgi/README.md
+[9]: examples/osgi-test-example-mvn
+[10]: examples/osgi-test-example-mvn/org.osgi.test.example.demo
 

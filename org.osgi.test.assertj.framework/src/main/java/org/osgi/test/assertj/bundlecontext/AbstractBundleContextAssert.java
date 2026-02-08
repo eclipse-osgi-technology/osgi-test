@@ -118,4 +118,5 @@ public abstract class AbstractBundleContextAssert<SELF extends AbstractBundleCon
 		return isNotNull().extracting(bundleContext -> Arrays.asList(bundleContext.getBundles()), BUNDLE_LIST)
 			.as(actual + ".bundles");
 	}
+
 }

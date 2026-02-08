@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 import org.junit.jupiter.api.Test;
-import org.osgi.test.example.api.Ball;
+import org.osgi.test.example.player.api.Ball;
 
 public class OpenBoxTest {
 

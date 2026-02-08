@@ -46,6 +46,7 @@ import org.osgi.test.common.annotation.Property.Type;
 import org.osgi.test.common.annotation.config.InjectConfiguration;
 import org.osgi.test.common.annotation.config.WithConfiguration;
 import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
+import org.osgi.test.common.dictionary.Dictionaries;
 import org.osgi.test.junit5.cm.ConfigUtil;
 
 @WithConfiguration(pid = ConfigAnnotationTest.NONSTATIC_CONFIGURATION_PID)
@@ -56,6 +57,15 @@ public class ConfigAnnotationTest {
 
 	@InjectService
 	ConfigurationAdmin			ca;
+
+	@Test
+	public void oldWay(@InjectService
+	ConfigurationAdmin ca2) throws Exception {
+
+		Configuration c = ca.createFactoryConfiguration(FACTORY_CONFIGURATION_PID);
+		c.update(Dictionaries.dictionaryOf("foo", "bar"));
+
+	}
 
 	// START TESTS
 	@InjectConfiguration(NONSTATIC_CONFIGURATION_PID)
@@ -432,7 +442,6 @@ public class ConfigAnnotationTest {
 			})
 		}))
 		Configuration cs) throws Exception {
-			assertThat(cs).isNotNull();
 			assertThat(cs).isNotNull();
 			assertThat(cs.getProperties()
 				.get("testScalar")).isEqualTo(System.getenv("PATH"));

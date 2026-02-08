@@ -20,10 +20,10 @@
 	ch.qos.logback.core,\
 	org.apache.felix.logback,\
 	slf4j.api
--runrequires: \
-	bnd.identity;id='${project.artifactId}-tests'
+-runrequires: bnd.identity;id='${project.artifactId}-tests'
 # This will help us keep -runbundles sorted
 -runstartlevel: \
     order=sortbynameversion,\
     begin=-1
+
 # -runbundles is calculated by the bnd-resolver-maven-plugin

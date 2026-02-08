@@ -1,0 +1,2 @@
+Export-Package: ${p}.testbundle.tb1.*;-split-package:=first
+Foo: Bar

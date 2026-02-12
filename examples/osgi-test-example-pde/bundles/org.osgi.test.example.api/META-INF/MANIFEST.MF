@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: API
+Bundle-SymbolicName: org.osgi.test.example.api
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: org.osgi.test.example.api
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Export-Package: org.osgi.test.example.api;version="1.0.0"

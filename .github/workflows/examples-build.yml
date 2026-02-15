@@ -53,7 +53,6 @@ jobs:
         java:
         - '17'
         - '21'
-        - '25'
         os:
         - 'ubuntu-latest'
         example:

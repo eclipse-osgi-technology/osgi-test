@@ -9,8 +9,8 @@ org.junit.jupiter:junit-jupiter-engine:${junit_jupiter_version}
 org.junit.platform:junit-platform-commons:${junit_platform_version}
 org.junit.platform:junit-platform-engine:${junit_platform_version}
 org.junit.platform:junit-platform-launcher:${junit_platform_version}
-org.apiguardian:apiguardian-api:1.1.0
-org.opentest4j:opentest4j:1.2.0
+org.apiguardian:apiguardian-api:1.1.2
+org.opentest4j:opentest4j:1.3.0
 org.assertj:assertj-core:${assertj_version}
 org.mockito:mockito-core:${mockito_version}
 net.bytebuddy:byte-buddy:${bytebuddy_version}
@@ -19,11 +19,11 @@ org.objenesis:objenesis:${objenesis_version}
 org.osgi:org.osgi.test.common:${osgi_test_version}
 org.osgi:org.osgi.test.junit5:${osgi_test_version}
 org.osgi:org.osgi.test.assertj.framework:${osgi_test_version}
-org.apache.felix:org.apache.felix.scr:2.2.4
+org.apache.felix:org.apache.felix.scr:2.2.14
 org.apache.felix:org.apache.felix.logback:1.0.6
-ch.qos.logback:logback-classic:1.3.4
-ch.qos.logback:logback-core:1.3.4
-org.slf4j:slf4j-api:2.0.0
-org.eclipse.platform:org.eclipse.osgi:3.18.200
+ch.qos.logback:logback-classic:1.3.14
+ch.qos.logback:logback-core:1.3.14
+org.slf4j:slf4j-api:2.0.7
+org.eclipse.platform:org.eclipse.osgi:3.23.200
 org.osgi:org.osgi.util.function:1.2.0
 org.osgi:org.osgi.util.promise:1.3.0

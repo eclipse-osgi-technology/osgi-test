@@ -33,14 +33,14 @@ public class Demo_05_BundleInstaller_Test {
 	void bundleInstaller_EmbeddedLocation_spec(@InjectBundleInstaller BundleInstaller bundleInstaller, @InjectBundleContext BundleContext bc) throws Exception {
 
 		// "bundle.symbolic.name:1.2.3:/path/file.jar"
-		EmbeddedLocation el = EmbeddedLocation.of(bc, "org.osgi.test.example.demo-tests:1.0.0.SNAPSHOT:/embeddedTestBundles/tb1.jar");
+		EmbeddedLocation el = EmbeddedLocation.of(bc, "org.osgi.test.example.demo-tests:1.4.0.SNAPSHOT:/embeddedTestBundles/tb1.jar");
 		bundleInstaller.installBundle(el, true);
 	}
 
 	@Test
 	void bundleInstaller_EmbeddedLocation_fqn(@InjectBundleInstaller BundleInstaller bundleInstaller, @InjectBundleContext BundleContext bc) throws Exception {
 
-		EmbeddedLocation el = EmbeddedLocation.of("org.osgi.test.example.demo-tests", new Version(1, 0, 0, "SNAPSHOT"), "embeddedTestBundles", "tb1.jar");
+		EmbeddedLocation el = EmbeddedLocation.of("org.osgi.test.example.demo-tests", new Version(1, 4, 0, "SNAPSHOT"), "embeddedTestBundles", "tb1.jar");
 		bundleInstaller.installBundle(el, true);
 	}
 

@@ -16,6 +16,38 @@
  * SPDX-License-Identifier: Apache-2.0
  *******************************************************************************/
 
-@org.osgi.annotation.bundle.Export
-@org.osgi.annotation.versioning.Version("1.1.0")
-package org.osgi.test.assertj.bundleevent;
+package org.osgi.test.assertj.frameworkevent;
+
+import java.util.function.Predicate;
+
+import org.osgi.framework.FrameworkEvent;
+
+/**
+ * The Class FrameworkEventPredicates.
+ *
+ * @since 1.1
+ */
+public final class FrameworkEventPredicates {
+
+	private FrameworkEventPredicates() {}
+	/**
+	 * Returns a predicate that tests if the object is a framework event.
+	 *
+	 * @return the predicate
+	 */
+	public static Predicate<Object> frameworkEvent() {
+		return e -> e instanceof FrameworkEvent;
+	}
+
+	/**
+	 * Returns a predicate that tests if the event-type matches the
+	 * eventTypeMask.
+	 *
+	 * @param eventTypeMask the event type mask
+	 * @return the predicate
+	 */
+	public static Predicate<FrameworkEvent> type(final int eventTypeMask) {
+		return e -> (e.getType() & eventTypeMask) != 0;
+	}
+
+}

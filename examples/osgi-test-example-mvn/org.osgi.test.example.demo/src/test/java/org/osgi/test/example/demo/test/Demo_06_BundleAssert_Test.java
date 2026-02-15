@@ -60,7 +60,7 @@ public class Demo_06_BundleAssert_Test {
 
 		ba.hasVersionThat()//
 				.hasMajor(1)//
-				.hasMinor(0)//
+				.hasMinor(4)//
 				.hasMicro(0)//
 				.hasQualifier("SNAPSHOT");
 	}

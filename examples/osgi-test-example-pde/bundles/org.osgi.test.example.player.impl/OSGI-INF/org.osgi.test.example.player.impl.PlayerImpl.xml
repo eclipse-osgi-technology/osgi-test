@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="org.osgi.test.example.player.impl.PlayerImpl">
+   <service>
+      <provide interface="org.osgi.test.example.api.Player"/>
+   </service>
+   <reference cardinality="1..1" field="ball" interface="org.osgi.test.example.api.Ball" name="ball"/>
+   <implementation class="org.osgi.test.example.player.impl.PlayerImpl"/>
+</scr:component>

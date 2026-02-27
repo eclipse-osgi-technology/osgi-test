@@ -104,14 +104,19 @@ jobs:
     - name: Verify deployment secrets are configured
       run: |
         MISSING=""
-        if [[ -z "${{ secrets.GPG_PRIVATE_KEY }}" ]]; then MISSING="${MISSING} GPG_PRIVATE_KEY"; fi
-        if [[ -z "${{ secrets.GPG_PASSPHRASE }}" ]]; then MISSING="${MISSING} GPG_PASSPHRASE"; fi
-        if [[ -z "${{ secrets.CENTRAL_SONATYPE_TOKEN_USERNAME }}" ]]; then MISSING="${MISSING} CENTRAL_SONATYPE_TOKEN_USERNAME"; fi
-        if [[ -z "${{ secrets.CENTRAL_SONATYPE_TOKEN_PASSWORD }}" ]]; then MISSING="${MISSING} CENTRAL_SONATYPE_TOKEN_PASSWORD"; fi
+        if [[ -z "${SECRET_GPG_KEY}" ]]; then MISSING="${MISSING} GPG_PRIVATE_KEY"; fi
+        if [[ -z "${SECRET_GPG_PASS}" ]]; then MISSING="${MISSING} GPG_PASSPHRASE"; fi
+        if [[ -z "${SECRET_SONATYPE_USER}" ]]; then MISSING="${MISSING} CENTRAL_SONATYPE_TOKEN_USERNAME"; fi
+        if [[ -z "${SECRET_SONATYPE_PASS}" ]]; then MISSING="${MISSING} CENTRAL_SONATYPE_TOKEN_PASSWORD"; fi
         if [[ -n "${MISSING}" ]]; then
           echo "::error::Missing required deployment secrets:${MISSING}"
           exit 1
         fi
+      env:
+        SECRET_GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        SECRET_GPG_PASS: ${{ secrets.GPG_PASSPHRASE }}
+        SECRET_SONATYPE_USER: ${{ secrets.CENTRAL_SONATYPE_TOKEN_USERNAME }}
+        SECRET_SONATYPE_PASS: ${{ secrets.CENTRAL_SONATYPE_TOKEN_PASSWORD }}
     - name: Install gpg secret key
       run: |
         cat <(echo -e "${{ secrets.GPG_PRIVATE_KEY }}") | gpg --batch --import

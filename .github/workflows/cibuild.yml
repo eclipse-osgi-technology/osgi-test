@@ -107,6 +107,21 @@ jobs:
         gpg --list-secret-keys --keyid-format LONG
     - name: Git Checkout
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+    - name: Validate version against branch
+      run: |
+        VERSION=$(./mvnw -B -q help:evaluate -Dexpression=revision -DforceStdout)
+        echo "Project version: ${VERSION}"
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          if [[ "${VERSION}" != *-SNAPSHOT ]]; then
+            echo "::error::main branch requires a SNAPSHOT version, but found: ${VERSION}"
+            exit 1
+          fi
+        elif [[ "${{ github.ref }}" == "refs/heads/release" ]]; then
+          if [[ "${VERSION}" == *-SNAPSHOT ]]; then
+            echo "::error::release branch requires a release version (no -SNAPSHOT), but found: ${VERSION}"
+            exit 1
+          fi
+        fi
     - name: Set up Java
       uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
       with:

@@ -101,9 +101,20 @@ jobs:
       with:
         egress-policy: audit
 
+    - name: Verify deployment secrets are configured
+      run: |
+        MISSING=""
+        if [[ -z "${{ secrets.GPG_PRIVATE_KEY }}" ]]; then MISSING="${MISSING} GPG_PRIVATE_KEY"; fi
+        if [[ -z "${{ secrets.GPG_PASSPHRASE }}" ]]; then MISSING="${MISSING} GPG_PASSPHRASE"; fi
+        if [[ -z "${{ secrets.CENTRAL_SONATYPE_TOKEN_USERNAME }}" ]]; then MISSING="${MISSING} CENTRAL_SONATYPE_TOKEN_USERNAME"; fi
+        if [[ -z "${{ secrets.CENTRAL_SONATYPE_TOKEN_PASSWORD }}" ]]; then MISSING="${MISSING} CENTRAL_SONATYPE_TOKEN_PASSWORD"; fi
+        if [[ -n "${MISSING}" ]]; then
+          echo "::error::Missing required deployment secrets:${MISSING}"
+          exit 1
+        fi
     - name: Install gpg secret key
       run: |
-        cat <(echo -e "${{ secrets.ORG_GPG_PRIVATE_KEY }}") | gpg --batch --import
+        cat <(echo -e "${{ secrets.GPG_PRIVATE_KEY }}") | gpg --batch --import
         gpg --list-secret-keys --keyid-format LONG
     - name: Git Checkout
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -128,7 +139,7 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
         cache: 'maven'
-        server-id: ossrh
+        server-id: central
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
         gpg-passphrase: PASSPHRASE
@@ -136,6 +147,6 @@ jobs:
       run: |
         ./mvnw -B --no-transfer-progress -Pdeploy clean deploy
       env:
-        MAVEN_USERNAME: ${{ secrets.ORG_OSSRH_USERNAME }}
-        MAVEN_PASSWORD: ${{ secrets.ORG_OSSRH_PASSWORD }}
-        PASSPHRASE: ${{ secrets.ORG_GPG_PASSPHRASE }}
+        MAVEN_USERNAME: ${{ secrets.CENTRAL_SONATYPE_TOKEN_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.CENTRAL_SONATYPE_TOKEN_PASSWORD }}
+        PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

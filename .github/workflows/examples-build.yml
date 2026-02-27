@@ -77,7 +77,17 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
-    - name: Build
-      id: build
+    - name: Build Maven Example
+      if: matrix.example == 'mvn'
       run: |
-        ./.github/scripts/example-${{ matrix.example }}-build.sh
+        ./mvnw -B --no-transfer-progress --file examples/osgi-test-example-mvn verify
+    - name: Build Gradle Example
+      if: matrix.example == 'gradle'
+      run: |
+        cd examples/osgi-test-example-gradle
+        ./gradlew build
+    - name: Build BndWorkspace Example
+      if: matrix.example == 'bndworkspace'
+      run: |
+        cd examples/osgi-test-example-bndworkspace
+        ./gradlew build

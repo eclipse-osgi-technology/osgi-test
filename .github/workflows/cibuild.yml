@@ -62,7 +62,6 @@ jobs:
           java: '17'
         - os: 'ubuntu-latest'
           java: '17'
-          canonical: ${{ (github.repository == 'osgi/osgi-test') && ((github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/release')) && (github.event_name != 'pull_request') }}
         - os: 'ubuntu-latest'
           java: '17'
           experimental: true
@@ -73,7 +72,7 @@ jobs:
     - name: Harden Runner
       uses: step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b
       with:
-        egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+        egress-policy: audit
 
     - name: Git Checkout
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -82,27 +81,61 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
+        cache: 'maven'
     - name: Build
       id: build
       continue-on-error: ${{ matrix.experimental }}
       run: |
-        ./.github/scripts/build.sh ${{ matrix.mavenopts }}
-    - name: Configure settings.xml for Publish
-      if: ${{ matrix.canonical }}
+        ./mvnw -B --no-transfer-progress install ${{ matrix.mavenopts }}
+
+  deploy:
+    needs: build
+    if: >-
+      github.repository == 'eclipse-osgi-technology/osgi-test'
+      && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/release')
+      && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b
+      with:
+        egress-policy: audit
+
+    - name: Install gpg secret key
+      run: |
+        cat <(echo -e "${{ secrets.ORG_GPG_PRIVATE_KEY }}") | gpg --batch --import
+        gpg --list-secret-keys --keyid-format LONG
+    - name: Git Checkout
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+    - name: Validate version against branch
+      run: |
+        VERSION=$(./mvnw -B -q help:evaluate -Dexpression=revision -DforceStdout)
+        echo "Project version: ${VERSION}"
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          if [[ "${VERSION}" != *-SNAPSHOT ]]; then
+            echo "::error::main branch requires a SNAPSHOT version, but found: ${VERSION}"
+            exit 1
+          fi
+        elif [[ "${{ github.ref }}" == "refs/heads/release" ]]; then
+          if [[ "${VERSION}" == *-SNAPSHOT ]]; then
+            echo "::error::release branch requires a release version (no -SNAPSHOT), but found: ${VERSION}"
+            exit 1
+          fi
+        fi
+    - name: Set up Java
       uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
       with:
         distribution: 'temurin'
-        java-version: ${{ matrix.java }}
+        java-version: '17'
+        cache: 'maven'
         server-id: ossrh
-        server-username: OSSRH_USERNAME
-        server-password: OSSRH_PASSWORD
-        gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-        gpg-passphrase: GPG_PASSPHRASE
-    - name: Publish
-      if: ${{ matrix.canonical }}
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
+        gpg-passphrase: PASSPHRASE
+    - name: Deploy
       run: |
-        ./.github/scripts/publish.sh -Possrh
+        ./mvnw -B --no-transfer-progress -Pdeploy clean deploy
       env:
-        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+        MAVEN_USERNAME: ${{ secrets.ORG_OSSRH_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.ORG_OSSRH_PASSWORD }}
+        PASSPHRASE: ${{ secrets.ORG_GPG_PASSPHRASE }}

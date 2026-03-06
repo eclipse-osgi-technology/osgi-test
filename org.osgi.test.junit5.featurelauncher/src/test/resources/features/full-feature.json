@@ -1,0 +1,176 @@
+{
+	"id": "org.eclipse.osgi.technology.featurelauncher:full-feature:1.0",
+	"name": "Full integration test feature",
+	"complete": true,
+	"bundles": [
+		{
+			"id": "org.apache.felix:org.apache.felix.configadmin:1.9.26"
+		},
+		{
+			"id": "org.apache.felix:org.apache.felix.scr:2.2.14"
+		},
+		{
+			"id": "org.osgi:org.osgi.service.component:1.5.1"
+		},
+		{
+			"id": "org.osgi:org.osgi.util.promise:1.3.0"
+		},
+		{
+			"id": "org.osgi:org.osgi.util.function:1.2.0"
+		},
+		{
+			"id": "org.apache.felix:org.apache.felix.http.jetty12:1.1.8"
+		},
+		{
+			"id": "org.apache.felix:org.apache.felix.http.servlet-api:6.1.0"
+		},
+		{
+			"id": "commons-fileupload:commons-fileupload:1.6.0"
+		},
+		{
+			"id": "commons-io:commons-io:2.14.0"
+		},
+		{
+			"id": "org.osgi:org.osgi.service.servlet:2.0.0"
+		},
+		{
+			"id": "org.osgi:org.osgi.service.jakartars:2.0.0"
+		},
+		{
+			"id": "org.eclipse.osgi-technology.rest:org.eclipse.osgitech.rest:1.2.3"
+		},
+		{
+			"id": "org.eclipse.osgi-technology.rest:org.eclipse.osgitech.rest.sse:1.2.3"
+		},
+		{
+			"id": "org.eclipse.osgi-technology.rest:org.eclipse.osgitech.rest.servlet.whiteboard:1.2.3"
+		},
+		{
+			"id": "org.glassfish.jersey.core:jersey-common:3.1.3"
+		},
+		{
+			"id": "org.glassfish.jersey.core:jersey-client:3.1.3"
+		},
+		{
+			"id": "org.glassfish.jersey.core:jersey-server:3.1.3"
+		},
+		{
+			"id": "org.glassfish.jersey.containers:jersey-container-servlet:3.1.3"
+		},
+		{
+			"id": "org.glassfish.jersey.containers:jersey-container-servlet-core:3.1.3"
+		},
+		{
+			"id": "org.glassfish.jersey.inject:jersey-hk2:3.1.3"
+		},
+		{
+			"id": "org.glassfish.jersey.media:jersey-media-jaxb:3.1.3"
+		},
+		{
+			"id": "org.glassfish.jersey.media:jersey-media-sse:3.1.3"
+		},
+		{
+			"id": "org.glassfish.hk2:hk2-api:3.0.4"
+		},
+		{
+			"id": "org.glassfish.hk2:hk2-locator:3.0.4"
+		},
+		{
+			"id": "org.glassfish.hk2:hk2-utils:3.0.4"
+		},
+		{
+			"id": "org.glassfish.hk2.external:aopalliance-repackaged:3.0.4"
+		},
+		{
+			"id": "org.glassfish.hk2:osgi-resource-locator:1.0.3"
+		},
+		{
+			"id": "jakarta.ws.rs:jakarta.ws.rs-api:3.1.0"
+		},
+		{
+			"id": "jakarta.annotation:jakarta.annotation-api:2.1.1"
+		},
+		{
+			"id": "jakarta.inject:jakarta.inject-api:2.0.1"
+		},
+		{
+			"id": "jakarta.activation:jakarta.activation-api:2.1.2"
+		},
+		{
+			"id": "jakarta.validation:jakarta.validation-api:3.0.2"
+		},
+		{
+			"id": "jakarta.xml.bind:jakarta.xml.bind-api:4.0.0"
+		},
+		{
+			"id": "org.javassist:javassist:3.29.2-GA"
+		},
+		{
+			"id": "org.apache.aries.spifly:org.apache.aries.spifly.dynamic.bundle:1.3.7"
+		},
+		{
+			"id": "org.ow2.asm:asm:9.9"
+		},
+		{
+			"id": "org.ow2.asm:asm-commons:9.9"
+		},
+		{
+			"id": "org.ow2.asm:asm-tree:9.9"
+		},
+		{
+			"id": "org.ow2.asm:asm-analysis:9.9"
+		},
+		{
+			"id": "org.ow2.asm:asm-util:9.9"
+		},
+		{
+			"id": "org.slf4j:slf4j-api:2.0.17"
+		},
+		{
+			"id": "org.slf4j:slf4j-simple:2.0.17"
+		},
+		{
+			"id": "com.h2database:h2:2.3.230"
+		}
+	],
+	"configurations": {
+		"org.apache.felix.http": {
+			"org.apache.felix.http.enable": false
+		},
+		"org.apache.felix.http~http1": {
+			"org.osgi.service.http.port": 8181,
+			"org.apache.felix.http.runtime.init.id": "http1",
+			"test.string": "hello",
+			"test.int:Integer": 42,
+			"test.long:Long": 123456789,
+			"test.boolean": true,
+			"test.double": 3.14
+		},
+		"org.apache.felix.http~http2": {
+			"org.osgi.service.http.port": 8182,
+			"org.apache.felix.http.runtime.init.id": "http2"
+		},
+		"org.apache.felix.http~http3": {
+			"org.osgi.service.http.port": 8183,
+			"org.apache.felix.http.runtime.init.id": "http3"
+		},
+		"JakartarsServletWhiteboardRuntimeComponent~rest1": {
+			"jersey.jakartars.whiteboard.name": "REST Whiteboard 1",
+			"jersey.context.path": "rest1",
+			"osgi.http.whiteboard.target": "(id=http1)"
+		},
+		"JakartarsServletWhiteboardRuntimeComponent~rest2": {
+			"jersey.jakartars.whiteboard.name": "REST Whiteboard 2",
+			"jersey.context.path": "rest2",
+			"osgi.http.whiteboard.target": "(id=http2)"
+		},
+		"org.eclipse.osgi.technology.featurelauncher.test.typecheck": {
+			"string.value": "hello",
+			"int.value:Integer": 42,
+			"long.value:Long": 123456789,
+			"boolean.value": true,
+			"double.value": 3.14,
+			"string.array": ["alpha", "beta", "gamma"]
+		}
+	}
+}

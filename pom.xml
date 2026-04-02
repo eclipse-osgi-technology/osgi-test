@@ -48,7 +48,7 @@
 		<osgi.annotation.version>8.1.0</osgi.annotation.version>
 		<osgi.dto.version>1.1.0</osgi.dto.version>
 		<osgi.resource.version>1.0.0</osgi.resource.version>
-		<osgi.framework.version>1.8.0</osgi.framework.version>
+		<osgi.framework.version>1.9.0</osgi.framework.version>
 		<osgi.tracker.version>1.5.4</osgi.tracker.version>
 		<osgi.log.version>1.4.0</osgi.log.version>
 		<osgi.cm.version>1.6.1</osgi.cm.version>

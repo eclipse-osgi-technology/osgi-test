@@ -70,7 +70,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Harden Runner
-      uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d
+      uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5
       with:
         egress-policy: audit
 
@@ -97,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Harden Runner
-      uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d
+      uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5
       with:
         egress-policy: audit
 

@@ -16,14 +16,14 @@
  * SPDX-License-Identifier: Apache-2.0
  *******************************************************************************/
 
-package org.osgi.test.common.quiesce;
+package org.osgi.test.common.await;
 
 import java.time.Duration;
 
 /**
  * Thrown when the framework does not become quiet within the specified timeout.
  */
-public class QuiesceTimeoutException extends RuntimeException {
+public class AwaitCalmTimeoutException extends RuntimeException {
 
 	private static final long	serialVersionUID	= 1L;
 
@@ -36,7 +36,7 @@ public class QuiesceTimeoutException extends RuntimeException {
 	 * @param timeout the maximum wait time that expired
 	 * @param eventCount the number of events received before timeout
 	 */
-	public QuiesceTimeoutException(Duration quietPeriod, Duration timeout, int eventCount) {
+	public AwaitCalmTimeoutException(Duration quietPeriod, Duration timeout, int eventCount) {
 		super("Framework did not quiesce within " + timeout + " (required quiet period: " + quietPeriod + ", events: "
 			+ eventCount + ")");
 		this.quietPeriod = quietPeriod;

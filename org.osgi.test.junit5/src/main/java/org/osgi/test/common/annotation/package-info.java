@@ -17,7 +17,7 @@
  *******************************************************************************/
 
 @Export(attribute = "junit=5", substitution = Substitution.NOIMPORT)
-@Version("1.2.0")
+@Version("1.3.0")
 package org.osgi.test.common.annotation;
 
 import org.osgi.annotation.bundle.Export;

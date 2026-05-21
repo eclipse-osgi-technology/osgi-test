@@ -44,10 +44,6 @@ public class FrameworkWatcher implements AwaitCalm {
 		private int					eventCount;
 		private long				lastEventNanos;
 
-		private Listener() {
-			this.lastEventNanos = System.nanoTime();
-		}
-
 		@Override
 		public void bundleChanged(BundleEvent event) {
 			onEvent();
@@ -76,17 +72,28 @@ public class FrameworkWatcher implements AwaitCalm {
 			final long start = System.nanoTime();
 			long remainingQuiet = quietNanos;
 			lock.lock();
+			if (eventCount == 0) {
+				// If no events have occurred yet then we initialize
+				// lastEventNanos to when we started
+				lastEventNanos = start;
+			}
 			try {
 				for (long now = System.nanoTime(); (now - start) <= deadlineNanos; now = System.nanoTime()) {
 					remainingQuiet = quietNanos - (now - lastEventNanos);
 					if (remainingQuiet <= 0) {
+						// We have had enough quiet
 						return eventCount;
 					}
 					long elapsed = now - start;
 					if (remainingQuiet > (deadlineNanos - elapsed)) {
+						// There is no longer enough time for quietPeriod to
+						// pass before the deadline
 						break;
 					}
-					quiet.awaitNanos(remainingQuiet);
+					if (quiet.awaitNanos(remainingQuiet) <= 0) {
+						// No need to re-check the elapsed time
+						return eventCount;
+					}
 				}
 			} finally {
 				lock.unlock();

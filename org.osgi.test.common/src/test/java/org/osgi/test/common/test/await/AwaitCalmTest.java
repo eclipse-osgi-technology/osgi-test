@@ -163,14 +163,14 @@ public class AwaitCalmTest {
 		@Test
 		@DisplayName("Time out while a noisy bundle does its work")
 		public void testNoisyBundleTimeout() throws Exception {
-			makeNoise(15, 50, bundleNoise(bundle));
+			makeNoise(6, 200, bundleNoise(bundle));
 
 			AwaitCalmTimeoutException exception = assertThrows(AwaitCalmTimeoutException.class,
-				() -> ac.waitForQuiet(ofMillis(500), ofSeconds(1)));
+				() -> ac.waitForQuiet(ofMillis(480), ofSeconds(1)));
 			List<TimedEvent<EventObject>> events = exception.getEvents();
-			// Technically any event after 36 may trigger the timer, but it must
-			// be between 37 and 41
-			assertThat(events.size()).isBetween(37, 41);
+			// Technically any event from the third iteration should trigger the
+			// timer, but on slow CI machines it may be between 9 and 12
+			assertThat(events.size()).isBetween(9, 12);
 			assertThat(events).isSorted();
 			assertThat(events).allMatch(e -> e.event() instanceof BundleEvent);
 		}
@@ -215,12 +215,12 @@ public class AwaitCalmTest {
 		@DisplayName("Time out while a noisy service does its work")
 		public void testNoisyServiceTimeout() throws Exception {
 			ServiceRegistration<?> reg = ctx.registerService(AwaitCalm.class, ac, new Hashtable<>());
-			makeNoise(15, 50, serviceNoise(reg));
+			makeNoise(10, 150, serviceNoise(reg));
 
 			AwaitCalmTimeoutException exception = assertThrows(AwaitCalmTimeoutException.class,
-				() -> ac.waitForQuiet(ofMillis(500), ofSeconds(1)));
+				() -> ac.waitForQuiet(ofMillis(490), ofSeconds(1)));
 			List<TimedEvent<EventObject>> events = exception.getEvents();
-			assertThat(events.size()).isEqualTo(10);
+			assertThat(events.size()).isEqualTo(4);
 			assertThat(events).isSorted();
 			assertThat(events).allMatch(e -> e.event() instanceof ServiceEvent);
 		}
@@ -287,15 +287,13 @@ public class AwaitCalmTest {
 		@DisplayName("Time out while a noisy bundle and service do their work")
 		public void testNoisyServiceAndBundleTimeout() throws Exception {
 			ServiceRegistration<?> reg = ctx.registerService(AwaitCalm.class, ac, new Hashtable<>());
-			makeNoise(15, 50, bundleNoise(bundle));
-			makeNoise(10, 50, serviceNoise(reg));
+			makeNoise(8, 50, bundleNoise(bundle));
+			makeNoise(2, 600, serviceNoise(reg));
 
 			AwaitCalmTimeoutException exception = assertThrows(AwaitCalmTimeoutException.class,
-				() -> ac.waitForQuiet(ofMillis(500), ofSeconds(1)));
+				() -> ac.waitForQuiet(ofMillis(480), ofSeconds(1)));
 			List<TimedEvent<EventObject>> events = exception.getEvents();
-			// Technically any event after 36 bundle events and 9 service events
-			// may trigger the timer, but it must be between 46 and 52
-			assertThat(events.size()).isBetween(46, 52);
+			assertThat(events.size()).isEqualTo(33);
 			assertThat(events).isSorted();
 		}
 	}

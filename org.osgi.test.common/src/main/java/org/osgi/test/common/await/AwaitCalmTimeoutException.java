@@ -19,6 +19,11 @@
 package org.osgi.test.common.await;
 
 import java.time.Duration;
+import java.util.Collections;
+import java.util.EventObject;
+import java.util.List;
+
+import org.osgi.test.common.await.AwaitCalm.TimedEvent;
 
 /**
  * Thrown when the framework does not become quiet within the specified timeout.
@@ -27,21 +32,21 @@ public class AwaitCalmTimeoutException extends RuntimeException {
 
 	private static final long	serialVersionUID	= 1L;
 
-	private final Duration		quietPeriod;
-	private final Duration		timeout;
-	private final int			eventCount;
+	private final Duration						quietPeriod;
+	private final Duration						timeout;
+	private final List<TimedEvent<EventObject>>	events;
 
 	/**
 	 * @param quietPeriod the required silence duration that was not reached
 	 * @param timeout the maximum wait time that expired
-	 * @param eventCount the number of events received before timeout
+	 * @param events the number of events received before timeout
 	 */
-	public AwaitCalmTimeoutException(Duration quietPeriod, Duration timeout, int eventCount) {
+	public AwaitCalmTimeoutException(Duration quietPeriod, Duration timeout, List<TimedEvent<EventObject>> events) {
 		super("Framework did not quiesce within " + timeout + " (required quiet period: " + quietPeriod + ", events: "
-			+ eventCount + ")");
+			+ events + ")");
 		this.quietPeriod = quietPeriod;
 		this.timeout = timeout;
-		this.eventCount = eventCount;
+		this.events = Collections.unmodifiableList(events);
 	}
 
 	/** Returns the required silence duration that was not reached. */
@@ -54,8 +59,8 @@ public class AwaitCalmTimeoutException extends RuntimeException {
 		return timeout;
 	}
 
-	/** Returns the number of events received before timeout. */
-	public int getEventCount() {
-		return eventCount;
+	/** Returns the events received before timeout. */
+	public List<TimedEvent<EventObject>> getEvents() {
+		return events;
 	}
 }

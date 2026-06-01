@@ -27,12 +27,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.function.IntConsumer;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
+import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,11 +42,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.test.common.await.AwaitCalm;
+import org.osgi.test.common.await.AwaitCalm.TimedEvent;
 import org.osgi.test.common.await.AwaitCalmTimeoutException;
 import org.osgi.test.common.await.FrameworkWatcher;
 
@@ -77,6 +82,26 @@ public class AwaitCalmTest {
 		t.start();
 	}
 
+	private IntConsumer bundleNoise(Bundle bundle) {
+		return x -> {
+			try {
+				bundle.stop();
+				bundle.start();
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException("Failed to cycle the bundle", e);
+			}
+		};
+	}
+
+	private IntConsumer serviceNoise(ServiceRegistration<?> reg) {
+		return count -> reg.setProperties(new Hashtable<String, Object>() {
+			{
+				put("count", count);
+			}
+		});
+	}
+
 	@AfterEach
 	void stopNoise() {
 		noisyThreads.forEach(t -> {
@@ -91,6 +116,9 @@ public class AwaitCalmTest {
 		noisyThreads.clear();
 	}
 
+	/**
+	 * Note that in all tests, each bundle noise iteration triggers four events
+	 */
 	@Nested
 	class FrameworkEvents {
 		private Bundle	bundle;
@@ -111,61 +139,54 @@ public class AwaitCalmTest {
 			bundle.start();
 		}
 
-		private IntConsumer bundleNoise() {
-			return x -> {
-				try {
-					bundle.stop();
-					bundle.start();
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new RuntimeException("Failed to cycle the bundle", e);
-				}
-			};
-		}
-
 		@Test
 		@DisplayName("Wait for a noisy bundle to finish doing things (Overall)")
 		public void testNoisyBundleOverall() throws Exception {
-			makeNoise(10, 50, bundleNoise());
+			makeNoise(10, 50, bundleNoise(bundle));
 
-			assertThat(ac.waitForQuiet(ofMillis(500), ofSeconds(2))).isGreaterThanOrEqualTo(10);
+			List<TimedEvent<EventObject>> events = ac.waitForQuiet(ofMillis(500), ofSeconds(2));
+			assertThat(events.size()).isEqualTo(40);
+			assertThat(events).isSorted();
+			assertThat(events).allMatch(e -> e.event() instanceof BundleEvent);
 		}
 
 		@Test
 		@DisplayName("Wait for a noisy bundle to finish doing things (Bundle)")
 		public void testNoisyBundleBundle() throws Exception {
-			makeNoise(10, 50, bundleNoise());
+			makeNoise(10, 50, bundleNoise(bundle));
 
-			assertThat(ac.waitForBundleQuiet(ofMillis(500), ofSeconds(2))).isGreaterThanOrEqualTo(10);
+			List<TimedEvent<BundleEvent>> events = ac.waitForBundleQuiet(ofMillis(500), ofSeconds(2));
+			assertThat(events.size()).isEqualTo(40);
+			assertThat(events).isSorted();
 		}
 
 		@Test
 		@DisplayName("Time out while a noisy bundle does its work")
 		public void testNoisyBundleTimeout() throws Exception {
-			makeNoise(15, 50, bundleNoise());
+			makeNoise(15, 50, bundleNoise(bundle));
 
-			assertThrows(AwaitCalmTimeoutException.class, () -> ac.waitForQuiet(ofMillis(500), ofSeconds(1)));
+			AwaitCalmTimeoutException exception = assertThrows(AwaitCalmTimeoutException.class,
+				() -> ac.waitForQuiet(ofMillis(500), ofSeconds(1)));
+			List<TimedEvent<EventObject>> events = exception.getEvents();
+			// Technically any event after 36 may trigger the timer, but it must
+			// be between 37 and 41
+			assertThat(events.size()).isBetween(37, 41);
+			assertThat(events).isSorted();
+			assertThat(events).allMatch(e -> e.event() instanceof BundleEvent);
 		}
 
 		@Test
 		@DisplayName("Service Events aren't blocked by a noisy bundle")
 		public void testNoisyBundleNoServiceTimeout() throws Exception {
-			makeNoise(15, 50, bundleNoise());
+			makeNoise(15, 50, bundleNoise(bundle));
 
-			assertThat(ac.waitForServiceQuiet(ofMillis(500), ofSeconds(1))).isLessThan(3);
+			List<TimedEvent<ServiceEvent>> events = ac.waitForServiceQuiet(ofMillis(500), ofSeconds(1));
+			assertThat(events).isEmpty();
 		}
 	}
 
 	@Nested
 	class ServiceEvents {
-
-		private IntConsumer serviceNoise(ServiceRegistration<?> reg) {
-			return count -> reg.setProperties(new Hashtable<String, Object>() {
-				{
-					put("count", count);
-				}
-			});
-		}
 
 		@Test
 		@DisplayName("Wait for a noisy service to finish doing things (Overall)")
@@ -173,7 +194,10 @@ public class AwaitCalmTest {
 			ServiceRegistration<?> reg = ctx.registerService(AwaitCalm.class, ac, new Hashtable<>());
 			makeNoise(10, 50, serviceNoise(reg));
 
-			assertThat(ac.waitForQuiet(ofMillis(500), ofSeconds(2))).isGreaterThanOrEqualTo(10);
+			List<TimedEvent<EventObject>> events = ac.waitForQuiet(ofMillis(500), ofSeconds(2));
+			assertThat(events.size()).isEqualTo(10);
+			assertThat(events).isSorted();
+			assertThat(events).allMatch(e -> e.event() instanceof ServiceEvent);
 		}
 
 		@Test
@@ -182,8 +206,9 @@ public class AwaitCalmTest {
 			ServiceRegistration<?> reg = ctx.registerService(AwaitCalm.class, ac, new Hashtable<>());
 			makeNoise(10, 50, serviceNoise(reg));
 
-			assertThat(ac.waitForServiceQuiet(ofMillis(500), ofSeconds(2)))
-				.isGreaterThanOrEqualTo(10);
+			List<TimedEvent<ServiceEvent>> events = ac.waitForServiceQuiet(ofMillis(500), ofSeconds(2));
+			assertThat(events.size()).isEqualTo(10);
+			assertThat(events).isSorted();
 		}
 
 		@Test
@@ -192,8 +217,12 @@ public class AwaitCalmTest {
 			ServiceRegistration<?> reg = ctx.registerService(AwaitCalm.class, ac, new Hashtable<>());
 			makeNoise(15, 50, serviceNoise(reg));
 
-			assertThrows(AwaitCalmTimeoutException.class,
+			AwaitCalmTimeoutException exception = assertThrows(AwaitCalmTimeoutException.class,
 				() -> ac.waitForQuiet(ofMillis(500), ofSeconds(1)));
+			List<TimedEvent<EventObject>> events = exception.getEvents();
+			assertThat(events.size()).isEqualTo(10);
+			assertThat(events).isSorted();
+			assertThat(events).allMatch(e -> e.event() instanceof ServiceEvent);
 		}
 
 		@Test
@@ -202,7 +231,8 @@ public class AwaitCalmTest {
 			ServiceRegistration<?> reg = ctx.registerService(AwaitCalm.class, ac, new Hashtable<>());
 			makeNoise(15, 50, serviceNoise(reg));
 
-			assertThat(ac.waitForBundleQuiet(ofMillis(500), ofSeconds(1))).isLessThan(3);
+			List<TimedEvent<BundleEvent>> events = ac.waitForBundleQuiet(ofMillis(500), ofSeconds(1));
+			assertThat(events).isEmpty();
 		}
 
 		@Test
@@ -211,9 +241,62 @@ public class AwaitCalmTest {
 			ServiceRegistration<?> reg = ctx.registerService(AwaitCalm.class, ac, new Hashtable<>());
 			makeNoise(15, 50, serviceNoise(reg));
 
-			assertThat(ac.waitForServiceQuiet(ofMillis(500), ofSeconds(1), "(count<=5)"))
-				.isEqualTo(7);
+			List<TimedEvent<ServiceEvent>> events = ac.waitForServiceQuiet(ofMillis(500), ofSeconds(1), "(count<=5)");
+			assertThat(events.size()).isEqualTo(7);
+			assertThat(events).isSorted();
 		}
 	}
 
+	@Nested
+	class MixedEvents {
+		private Bundle bundle;
+
+		@BeforeEach
+		void createBundle() throws IOException, BundleException {
+
+			Manifest manifest = new Manifest();
+			manifest.getMainAttributes()
+				.putValue(Constants.BUNDLE_MANIFESTVERSION, "2");
+			manifest.getMainAttributes()
+				.putValue(Constants.BUNDLE_SYMBOLICNAME, "testBundleMixed");
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			try (JarOutputStream jos = new JarOutputStream(baos, manifest)) {}
+
+			bundle = ctx.installBundle("test", new ByteArrayInputStream(baos.toByteArray()));
+			bundle.start();
+		}
+
+		@Test
+		@DisplayName("Wait for a noisy bundle and service to finish doing things (Overall)")
+		public void testNoisyServiceAndBundleOverall() throws Exception {
+			ServiceRegistration<?> reg = ctx.registerService(AwaitCalm.class, ac, new Hashtable<>());
+			makeNoise(10, 50, bundleNoise(bundle));
+			makeNoise(10, 50, serviceNoise(reg));
+
+			List<TimedEvent<EventObject>> events = ac.waitForQuiet(ofMillis(500), ofSeconds(2));
+			assertThat(events.size()).isEqualTo(50);
+			assertThat(events).isSorted();
+			assertThat(events).areExactly(40,
+				new Condition<>(te -> te.event() instanceof BundleEvent, "a Timed BundleEvent"));
+			assertThat(events).areExactly(10,
+				new Condition<>(te -> te.event() instanceof ServiceEvent, "a Timed ServiceEvent"));
+		}
+
+		@Test
+		@DisplayName("Time out while a noisy bundle and service do their work")
+		public void testNoisyServiceAndBundleTimeout() throws Exception {
+			ServiceRegistration<?> reg = ctx.registerService(AwaitCalm.class, ac, new Hashtable<>());
+			makeNoise(15, 50, bundleNoise(bundle));
+			makeNoise(10, 50, serviceNoise(reg));
+
+			AwaitCalmTimeoutException exception = assertThrows(AwaitCalmTimeoutException.class,
+				() -> ac.waitForQuiet(ofMillis(500), ofSeconds(1)));
+			List<TimedEvent<EventObject>> events = exception.getEvents();
+			// Technically any event after 36 bundle events and 9 service events
+			// may trigger the timer, but it must be between 46 and 52
+			assertThat(events.size()).isBetween(46, 52);
+			assertThat(events).isSorted();
+		}
+	}
 }

@@ -16,10 +16,45 @@
  * SPDX-License-Identifier: Apache-2.0
  *******************************************************************************/
 
-@Export(attribute = "junit=5", substitution = Substitution.NOIMPORT)
-@Version("1.3.0")
 package org.osgi.test.common.annotation;
 
-import org.osgi.annotation.bundle.Export;
-import org.osgi.annotation.bundle.Export.Substitution;
-import org.osgi.annotation.versioning.Version;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import org.osgi.test.common.await.AwaitCalm;
+
+/**
+ * Inject an {@link AwaitCalm} instance into test classes and methods.
+ * <p>
+ * Example:
+ *
+ * <pre>
+ * class MyTests {
+ * 	// For JUnit4
+ * 	&#64;Rule
+ * 	AwaitCalmRule acr = new AwaitCalmRule();
+ *
+ * 	&#64;InjectAwaitCalm
+ * 	AwaitCalm await;
+ *
+ * 	&#64;Test
+ * 	public void test() {
+ * 		// use await
+ * 	}
+ * }
+ * </pre>
+ */
+@Inherited
+@Target({
+	FIELD, PARAMETER
+})
+@Retention(RUNTIME)
+@Documented
+public @interface InjectAwaitCalm {
+}

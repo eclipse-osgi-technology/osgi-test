@@ -20,103 +20,30 @@ package org.osgi.test.common.await;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
-import org.osgi.framework.AllServiceListener;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.SynchronousBundleListener;
+import org.osgi.test.common.event.EventRecorder;
+import org.osgi.test.common.event.EventRecorders;
+import org.osgi.test.common.event.EventTimeoutException;
+import org.osgi.test.common.event.TimedEvent;
 
 /**
  * Waits for the OSGi framework to become quiet, i.e. no bundle or service
- * events are fired for a specified period. Implements both
- * {@link SynchronousBundleListener} and {@link AllServiceListener} so the
- * caller controls the scope by choosing which listener to register.
+ * events are fired for a specified period. Each wait arms an
+ * {@link EventRecorder} for its duration: a synchronous bundle listener, an
+ * {@code AllServiceListener}, or both, depending on the method called.
  */
 public class FrameworkWatcher implements AwaitCalm {
 
-	private static class Listener implements SynchronousBundleListener, AllServiceListener {
+	private final BundleContext ctx;
 
-		private final ReentrantLock				lock	= new ReentrantLock();
-		private final Condition					quiet	= lock.newCondition();
-		private List<TimedEvent<EventObject>>	events	= new ArrayList<>();
-		// Set before the listener is registered so that an event arriving
-		// before the wait starts is measured from the same origin
-		private final long						startNanos	= System.nanoTime();
-		private long							lastEventNanos	= startNanos;
-
-		@Override
-		public void bundleChanged(BundleEvent event) {
-			onEvent(event);
-		}
-
-		@Override
-		public void serviceChanged(ServiceEvent event) {
-			onEvent(event);
-		}
-
-		private void onEvent(EventObject event) {
-			lock.lock();
-			try {
-				long eventTime = System.nanoTime();
-				// The time of the previous event, or zero if this is the first one
-				Duration previousTime = events.isEmpty() ? Duration.ZERO
-					: events.get(events.size() - 1)
-						.time();
-				events.add(new TimedEvent<>(previousTime.plusNanos(eventTime - lastEventNanos), event));
-				lastEventNanos = eventTime;
-				quiet.signalAll();
-			} finally {
-				lock.unlock();
-			}
-		}
-
-		List<TimedEvent<EventObject>> doWaitForQuiet(Duration quietPeriod, Duration timeout)
-			throws InterruptedException, AwaitCalmTimeoutException {
-			final long quietNanos = quietPeriod.toNanos();
-			final long deadlineNanos = timeout.toNanos();
-			final long start = startNanos;
-			long remainingQuiet = quietNanos;
-			lock.lock();
-			try {
-				for (long now = System.nanoTime(); (now - start) <= deadlineNanos; now = System.nanoTime()) {
-					remainingQuiet = quietNanos - (now - lastEventNanos);
-					if (remainingQuiet <= 0) {
-						// We have had enough quiet
-						return safeEventListCopy();
-					}
-					long elapsed = now - start;
-					if (remainingQuiet > (deadlineNanos - elapsed)) {
-						// There is no longer enough time for quietPeriod to
-						// pass before the deadline
-						break;
-					}
-					if (quiet.awaitNanos(remainingQuiet) <= 0) {
-						// No need to re-check the elapsed time
-						return safeEventListCopy();
-					}
-				}
-			} finally {
-				lock.unlock();
-			}
-			throw new AwaitCalmTimeoutException(quietPeriod, timeout, safeEventListCopy());
-		}
-
-		private List<TimedEvent<EventObject>> safeEventListCopy() {
-			lock.lock();
-			try {
-				return Collections.unmodifiableList(new ArrayList<>(events));
-			} finally {
-				lock.unlock();
-			}
-		}
+	public FrameworkWatcher(BundleContext ctx) {
+		this.ctx = ctx;
 	}
 
 	private void validateTimeouts(Duration quietPeriod, Duration timeout) {
@@ -128,59 +55,45 @@ public class FrameworkWatcher implements AwaitCalm {
 		}
 	}
 
-	private final BundleContext ctx;
+	private static <E extends EventObject> List<TimedEvent<E>> waitForQuiet(EventRecorder<E> recorder,
+		Duration quietPeriod, Duration timeout) throws InterruptedException, AwaitCalmTimeoutException {
+		try (EventRecorder<E> r = recorder) {
+			return r.waitForQuiet(quietPeriod, timeout);
+		} catch (EventTimeoutException e) {
+			throw new AwaitCalmTimeoutException(quietPeriod, timeout, asEventObjects(e.getEvents()));
+		}
+	}
 
-	public FrameworkWatcher(BundleContext ctx) {
-		this.ctx = ctx;
+	@SuppressWarnings("unchecked")
+	private static List<TimedEvent<EventObject>> asEventObjects(List<TimedEvent<?>> events) {
+		List<TimedEvent<EventObject>> result = new ArrayList<>(events.size());
+		for (TimedEvent<?> event : events) {
+			result.add((TimedEvent<EventObject>) event);
+		}
+		return result;
 	}
 
 	@Override
 	public List<TimedEvent<EventObject>> waitForQuiet(Duration quietPeriod, Duration timeout)
 		throws InterruptedException, AwaitCalmTimeoutException {
 		validateTimeouts(quietPeriod, timeout);
-		Listener listener = new Listener();
-		ctx.addBundleListener(listener);
-		try {
-			ctx.addServiceListener(listener);
-			try {
-				return listener.doWaitForQuiet(quietPeriod, timeout);
-			} finally {
-				ctx.removeServiceListener(listener);
-			}
-		} finally {
-			ctx.removeBundleListener(listener);
-		}
+		return waitForQuiet(EventRecorders.bundleAndServiceEvents(ctx), quietPeriod, timeout);
 	}
 
 	@Override
 	public List<TimedEvent<BundleEvent>> waitForBundleQuiet(Duration quietPeriod, Duration timeout)
 		throws InterruptedException, AwaitCalmTimeoutException {
 		validateTimeouts(quietPeriod, timeout);
-		Listener listener = new Listener();
-		ctx.addBundleListener(listener);
-		try {
-			return listener.doWaitForQuiet(quietPeriod, timeout)
-				.stream()
-				.map(TimedEvent::asTimedBundleEvent)
-				.collect(Collectors.toList());
-		} finally {
-			ctx.removeBundleListener(listener);
-		}
+		return waitForQuiet(EventRecorders.bundleEvents(ctx, EventRecorders.ALL_TYPES, true), quietPeriod, timeout);
 	}
 
 	@Override
 	public List<TimedEvent<ServiceEvent>> waitForServiceQuiet(Duration quietPeriod, Duration timeout)
 		throws InterruptedException, AwaitCalmTimeoutException {
-		validateTimeouts(quietPeriod, timeout);
-		Listener listener = new Listener();
-		ctx.addServiceListener(listener);
 		try {
-			return listener.doWaitForQuiet(quietPeriod, timeout)
-				.stream()
-				.map(TimedEvent::asTimedServiceEvent)
-				.collect(Collectors.toList());
-		} finally {
-			ctx.removeServiceListener(listener);
+			return waitForServiceQuiet(quietPeriod, timeout, null);
+		} catch (InvalidSyntaxException e) {
+			throw new IllegalStateException(e); // cannot happen without a filter
 		}
 	}
 
@@ -188,15 +101,7 @@ public class FrameworkWatcher implements AwaitCalm {
 	public List<TimedEvent<ServiceEvent>> waitForServiceQuiet(Duration quietPeriod, Duration timeout, String filter)
 		throws InterruptedException, AwaitCalmTimeoutException, InvalidSyntaxException {
 		validateTimeouts(quietPeriod, timeout);
-		Listener listener = new Listener();
-		ctx.addServiceListener(listener, filter);
-		try {
-			return listener.doWaitForQuiet(quietPeriod, timeout)
-				.stream()
-				.map(TimedEvent::asTimedServiceEvent)
-				.collect(Collectors.toList());
-		} finally {
-			ctx.removeServiceListener(listener);
-		}
+		return waitForQuiet(EventRecorders.allServiceEvents(ctx, EventRecorders.ALL_TYPES, filter), quietPeriod,
+			timeout);
 	}
 }

@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
 
-import org.osgi.test.common.await.AwaitCalm.TimedEvent;
+import org.osgi.test.common.event.TimedEvent;
 
 /**
  * Thrown when the framework does not become quiet within the specified timeout.

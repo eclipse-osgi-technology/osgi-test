@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  *******************************************************************************/
-package org.osgi.test.common.test.await;
+package org.osgi.test.common.test.event;
 
 import static java.time.Duration.ofMillis;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +27,7 @@ import java.util.EventObject;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.osgi.test.common.await.AwaitCalm.TimedEvent;
+import org.osgi.test.common.event.TimedEvent;
 
 public class TimedEventTest {
 

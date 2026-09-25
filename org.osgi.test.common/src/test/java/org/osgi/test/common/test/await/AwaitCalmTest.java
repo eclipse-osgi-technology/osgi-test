@@ -50,7 +50,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.test.common.await.AwaitCalm;
-import org.osgi.test.common.await.AwaitCalm.TimedEvent;
+import org.osgi.test.common.event.TimedEvent;
 import org.osgi.test.common.await.AwaitCalmTimeoutException;
 import org.osgi.test.common.await.FrameworkWatcher;
 

@@ -36,7 +36,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.test.common.annotation.InjectAwaitCalm;
 import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.await.AwaitCalm;
-import org.osgi.test.common.await.AwaitCalm.TimedEvent;
+import org.osgi.test.common.event.TimedEvent;
 import org.osgi.test.junit4.await.AwaitCalmRule;
 import org.osgi.test.junit4.context.BundleContextRule;
 

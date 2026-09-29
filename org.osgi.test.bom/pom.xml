@@ -63,6 +63,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.osgi</groupId>
+				<artifactId>org.osgi.test.assertj.permission</artifactId>
+				<version>${project.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi</groupId>
 				<artifactId>org.osgi.test.assertj.promise</artifactId>
 				<version>${project.version}</version>
 				<scope>test</scope>

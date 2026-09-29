@@ -12,7 +12,7 @@ This artifact includes common utility classes which are useful in all testing sc
 
 ### org.osgi.test.assertj.*
 
-These artifacts provides support classes for OSGi testing with [AssertJ](https://github.com/joel-costigliola/assertj-core) including custom assertions. Currently there are artifacts for [org.osgi.framework][2], [org.osgi.util.promise][3], and [org.osgi.service.log][7].
+These artifacts provides support classes for OSGi testing with [AssertJ](https://github.com/joel-costigliola/assertj-core) including custom assertions. Currently there are artifacts for [org.osgi.framework][2], [org.osgi.util.promise][3], [org.osgi.service.log][7], and [`java.security` permissions][11].
 
 ### [org.osgi.test.junit4][4]
 
@@ -85,6 +85,7 @@ This project uses the [Bnd Maven Plugins](https://github.com/bndtools/bnd) to bu
 [6]: org.osgi.test.junit5.cm/README.md
 [7]: org.osgi.test.assertj.log/README.md
 [8]: org.osgi.test.junit5.listeners.log.osgi/README.md
+[11]: org.osgi.test.assertj.permission/README.md
 [9]: examples/osgi-test-example-mvn
 [10]: examples/osgi-test-example-mvn/org.osgi.test.example.demo
 

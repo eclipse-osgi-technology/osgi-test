@@ -18,7 +18,6 @@
 package org.osgi.test.common.event;
 
 import java.time.Duration;
-import java.util.EventObject;
 
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.Constants;
@@ -31,7 +30,7 @@ import org.osgi.test.common.bitmaps.ServiceEventType;
  * TimedEvents compare using their {@link #time()}, followed by the hashCode
  * of their event
  */
-public final class TimedEvent<T extends EventObject> implements Comparable<TimedEvent<?>> {
+public final class TimedEvent<T> implements Comparable<TimedEvent<?>> {
 
 	private final Duration		time;
 	private final T			event;

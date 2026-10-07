@@ -50,6 +50,18 @@ public final class EventRecorders {
 	private EventRecorders() {}
 
 	/**
+	 * A recorder fed by the test itself, for events the framework does not
+	 * deliver as bundle, service or framework events: the test's own listener
+	 * hands them to {@link ManualEventRecorder#record(Object)}.
+	 *
+	 * @param <E> the event type, which need not be an {@link EventObject}
+	 * @return a new, empty recorder
+	 */
+	public static <E> ManualEventRecorder<E> manual() {
+		return new ManualEventRecorder<>();
+	}
+
+	/**
 	 * Record all bundle events delivered to an asynchronous
 	 * {@link BundleListener}. Such a listener never receives the
 	 * {@code STARTING}, {@code STOPPING} and {@code LAZY_ACTIVATION} events.

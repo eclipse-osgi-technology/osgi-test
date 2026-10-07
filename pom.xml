@@ -36,7 +36,7 @@
 		<java.release>8</java.release>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<bnd.version>6.4.0</bnd.version>
+		<bnd.version>7.0.0</bnd.version>
 		<junit-jupiter.compile.version>5.8.2</junit-jupiter.compile.version>
 		<junit-platform.compile.version>1.8.2</junit-platform.compile.version>
 		<junit-jupiter.version>5.10.2</junit-jupiter.version>

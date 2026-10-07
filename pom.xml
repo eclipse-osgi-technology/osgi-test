@@ -65,6 +65,7 @@
 		<module>org.osgi.test.assertj.log</module>
 		<module>org.osgi.test.assertj.permission</module>
 		<module>org.osgi.test.assertj.promise</module>
+		<module>org.osgi.test.assertj.xml</module>
 		<module>org.osgi.test.junit4</module>
 		<module>org.osgi.test.junit5</module>
 		<module>org.osgi.test.junit5.cm</module>

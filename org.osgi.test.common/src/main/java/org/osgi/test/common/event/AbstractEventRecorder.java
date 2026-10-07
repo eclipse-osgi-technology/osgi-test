@@ -20,7 +20,6 @@ package org.osgi.test.common.event;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.Condition;
@@ -35,7 +34,7 @@ import org.osgi.test.common.event.TimedEvent;
  *
  * @param <E> the type of event recorded
  */
-abstract class AbstractEventRecorder<E extends EventObject> implements EventRecorder<E> {
+abstract class AbstractEventRecorder<E> implements EventRecorder<E> {
 
 	private final ReentrantLock		lock		= new ReentrantLock();
 	private final Condition			changed		= lock.newCondition();

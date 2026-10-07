@@ -18,7 +18,6 @@
 package org.osgi.test.common.event;
 
 import java.time.Duration;
-import java.util.EventObject;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -26,8 +25,11 @@ import org.osgi.annotation.versioning.ProviderType;
 import org.osgi.test.common.event.TimedEvent;
 
 /**
- * Records framework events from the moment it is created until it is
- * {@link #close() closed}, and lets a test wait for them.
+ * Records events from the moment it is created until it is
+ * {@link #close() closed}, and lets a test wait for them. The recorders of
+ * {@link EventRecorders} listen to the framework's bundle, service and
+ * framework events; a {@link ManualEventRecorder} records what the test feeds
+ * it.
  * <p>
  * A recorder is armed <em>before</em> the action under test, so that
  * synchronously delivered events and events that arrive before the test
@@ -52,7 +54,7 @@ import org.osgi.test.common.event.TimedEvent;
  * @param <E> the type of event recorded
  */
 @ProviderType
-public interface EventRecorder<E extends EventObject> extends AutoCloseable {
+public interface EventRecorder<E> extends AutoCloseable {
 
 	/**
 	 * @return a snapshot of the events recorded since the last drain, in the

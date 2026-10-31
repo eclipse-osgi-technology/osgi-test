@@ -425,7 +425,7 @@ SPDX-License-Identifier: ${project.licenses[0].name}
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.15</version>
+					<version>0.8.16</version>
 					<executions>
 						<execution>
 							<id>default-prepare-agent</id>

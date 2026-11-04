@@ -11,6 +11,12 @@ permissions:
   contents: read
 jobs:
   release:
+    # the provenance job of maven-release attests the release with SLSA
+    # build provenance and attaches it to the release of the tag
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     uses: eclipse-osgi-technology/.github/.github/workflows/maven-release.yml@main
     secrets: inherit
     with:

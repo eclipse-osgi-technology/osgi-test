@@ -17,7 +17,7 @@ jobs:
       contents: read
       # the test report is published as a check run
       checks: write
-    uses: eclipse-osgi-technology/.github/.github/workflows/maven-build.yml@main
+    uses: eclipse-osgi-technology/.github/.github/workflows/maven-build.yml@aaa98d527667f930b6ff51e86e4568988b3ea1d3 # 0.0.1
     secrets: inherit
     with:
       # osgi-test runs on Java 8 and later

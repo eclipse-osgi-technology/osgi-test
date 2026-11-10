@@ -17,7 +17,7 @@ jobs:
       contents: write
       id-token: write
       attestations: write
-    uses: eclipse-osgi-technology/.github/.github/workflows/maven-release.yml@main
+    uses: eclipse-osgi-technology/.github/.github/workflows/maven-release.yml@aaa98d527667f930b6ff51e86e4568988b3ea1d3 # 0.0.1
     secrets: inherit
     with:
       jdk: '17'

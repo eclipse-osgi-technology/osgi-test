@@ -403,6 +403,7 @@ SPDX-License-Identifier: ${project.licenses[0].name}
 					<version>1.8.0</version>
 					<configuration>
 						<flattenMode>oss</flattenMode>
+						<updatePomFile>true</updatePomFile>
 					</configuration>
 					<executions>
 						<execution>
@@ -418,6 +419,29 @@ SPDX-License-Identifier: ${project.licenses[0].name}
 							<goals>
 								<goal>clean</goal>
 							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<!-- fail the build if a pom would be deployed with an unresolved revision property -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>3.5.0</version>
+					<executions>
+						<execution>
+							<id>check-flattened-pom</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>enforce</goal>
+							</goals>
+							<configuration>
+								<rules>
+									<evaluateBeanshell>
+										<condition>"${project.file}".endsWith(".flattened-pom.xml")</condition>
+										<message>The pom of ${project.artifactId} is not flattened, so it would be deployed with an unresolved version. Set updatePomFile on the flatten plugin.</message>
+									</evaluateBeanshell>
+								</rules>
+							</configuration>
 						</execution>
 					</executions>
 				</plugin>
@@ -577,6 +601,10 @@ SPDX-License-Identifier: ${project.licenses[0].name}
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>flatten-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

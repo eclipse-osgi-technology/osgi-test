@@ -4,7 +4,7 @@ assertj_version: 3.27.7
 mockito_version: 4.11.0
 objenesis_version: 3.3
 bytebuddy_version: 1.18.3
-osgi_test_version: 1.3.0
+osgi_test_version: 1.4.0
 
 junit: \
 	junit-platform-commons;version=latest,\
